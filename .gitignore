@@ -1,0 +1,34 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python (Backend)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.python-version
+.uv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+backend/alembic/versions/*
+!backend/alembic/versions/.gitkeep
+
+# Node (Frontend)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
+.stylelintcache
+frontend/.vite/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
