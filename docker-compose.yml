@@ -15,6 +15,7 @@ services:
       context: ./backend
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
+      - LOGTO_ENDPOINT=http://logto:3001
     ports:
       - "8000:8000"
     depends_on:
@@ -35,5 +36,30 @@ services:
       - ./frontend:/app
       - /app/node_modules
 
+  logto-db:
+    image: postgres:15-alpine
+    volumes:
+      - logto_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=logto
+      - POSTGRES_PASSWORD=logto
+      - POSTGRES_DB=logto
+    ports:
+      - "5433:5432"
+
+  logto:
+    image: ghcr.io/logto-io/logto:latest
+    depends_on:
+      - logto-db
+    environment:
+      - DB_URL=postgresql://logto:logto@logto-db:5432/logto
+      - ENDPOINT=http://localhost:3001
+      - ADMIN_ENDPOINT=http://localhost:3002
+      - TRUST_PROXY_HEADER=1
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+
 volumes:
   postgres_data:
+  logto_data:

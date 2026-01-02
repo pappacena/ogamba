@@ -8,3 +8,9 @@ class Item(Base):
     title = Column(String, index=True)
     description = Column(String, index=True)
     completed = Column(Boolean, default=False)
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    logto_id = Column(String, unique=True, index=True, nullable=False)

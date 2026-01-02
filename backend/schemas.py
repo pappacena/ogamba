@@ -14,3 +14,15 @@ class Item(ItemBase):
 
     class Config:
         from_attributes = True
+
+class UserBase(BaseModel):
+    logto_id: str
+
+class UserCreate(UserBase):
+    pass
+
+class User(UserBase):
+    id: int
+
+    class Config:
+        from_attributes = True
