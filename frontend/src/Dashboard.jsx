@@ -187,7 +187,11 @@ function Dashboard() {
         ) : (
           <div className="projects-grid">
             {projects.map((project) => (
-              <div key={project.id} className="project-card glass glass-card">
+              <div
+                key={project.id}
+                className="project-card glass glass-card clickable"
+                onClick={() => navigate(`/projects/${project.id}`)}
+              >
                 <div className="project-icon">📁</div>
                 <div className="project-info">
                   <h3>{project.name}</h3>
@@ -200,11 +204,20 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="project-actions">
-                  <button className="btn-icon" onClick={() => handleOpenModal(project)} title="Edit Project">⚙️</button>
-                  <button className="btn-icon btn-icon-danger" onClick={() => handleDeleteProject(project)} title="Delete Project">🗑️</button>
+                  <button
+                    className="btn-icon"
+                    onClick={(e) => { e.stopPropagation(); handleOpenModal(project); }}
+                    title="Edit Project Name"
+                  >⚙️</button>
+                  <button
+                    className="btn-icon btn-icon-danger"
+                    onClick={(e) => { e.stopPropagation(); handleDeleteProject(project); }}
+                    title="Delete Project"
+                  >🗑️</button>
                 </div>
               </div>
             ))}
+
           </div>
         )}
       </main>

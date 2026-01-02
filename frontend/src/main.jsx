@@ -6,6 +6,7 @@ import { LogtoProvider } from '@logto/react';
 import App from './App.jsx'
 import Callback from './Callback.jsx';
 import Dashboard from './Dashboard.jsx';
+import ProjectDetail from './ProjectDetail.jsx';
 
 const config = {
   endpoint: import.meta.env.VITE_LOGTO_ENDPOINT || 'http://localhost:3001',
@@ -20,8 +21,10 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<App />} />
           <Route path="/callback" element={<Callback />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects/:projectId" element={<ProjectDetail />} />
         </Routes>
       </LogtoProvider>
     </BrowserRouter>
   </StrictMode>,
 )
+
