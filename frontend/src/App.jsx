@@ -1,6 +1,17 @@
+import { useLogto } from '@logto/react';
 import './App.css'
 
 function App() {
+  const { isAuthenticated, signIn, signOut } = useLogto();
+
+  const handleSignIn = () => {
+    signIn(`${window.location.origin}/callback`);
+  };
+
+  const handleSignOut = () => {
+    signOut(window.location.origin);
+  };
+
   return (
     <div className="app-wrapper">
       <div className="gradient-bg"></div>
@@ -14,8 +25,15 @@ function App() {
           <div className="nav-links">
             <a href="#features">Features</a>
             <a href="#pricing">Pricing</a>
-            <button className="btn btn-secondary">Login</button>
-            <button className="btn btn-primary">Get Started</button>
+            {isAuthenticated ? (
+              <>
+                <button className="btn btn-secondary">Dashboard</button>
+                <button className="btn btn-secondary" onClick={handleSignOut}>Logout</button>
+              </>
+            ) : (
+              <button className="btn btn-secondary" onClick={handleSignIn}>Login</button>
+            )}
+            <button className="btn btn-primary" onClick={handleSignIn}>Get Started</button>
           </div>
         </div>
       </nav>

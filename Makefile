@@ -9,3 +9,7 @@ logto-init:
 
 migrate:
 	docker compose exec backend alembic upgrade head
+
+build:
+	docker compose down -v frontend
+	docker compose build
