@@ -153,7 +153,7 @@ function Dashboard() {
       <main className="container dashboard-content animate-fade-in">
         <header className="dashboard-header">
           <h1 className="text-gradient">Your Projects</h1>
-          <p className="subtitle">Manage and monitor your machine learning projects</p>
+          <p className="subtitle">Manage and monitor your projects</p>
         </header>
 
         {loading ? (
