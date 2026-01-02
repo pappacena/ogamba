@@ -1,77 +1,98 @@
-import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
-  const [items, setItems] = useState([])
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
-  useEffect(() => {
-    fetchItems()
-  }, [])
-
-  const fetchItems = async () => {
-    try {
-      const response = await fetch(`${API_URL}/items/`)
-      const data = await response.json()
-      setItems(data)
-    } catch (error) {
-      console.error('Error fetching items:', error)
-    }
-  }
-
-  const addItem = async (e) => {
-    e.preventDefault()
-    try {
-      const response = await fetch(`${API_URL}/items/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, description, completed: false }),
-      })
-      if (response.ok) {
-        setTitle('')
-        setDescription('')
-        fetchItems()
-      }
-    } catch (error) {
-      console.error('Error adding item:', error)
-    }
-  }
-
   return (
-    <div className="container">
-      <h1>Item List</h1>
+    <div className="app-wrapper">
+      <div className="gradient-bg"></div>
 
-      <form onSubmit={addItem} className="item-form">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <button type="submit">Add Item</button>
-      </form>
+      {/* Navigation */}
+      <nav className="navbar glass">
+        <div className="container nav-content">
+          <div className="logo">
+            <span className="text-gradient">OGamba</span>
+          </div>
+          <div className="nav-links">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <button className="btn btn-secondary">Login</button>
+            <button className="btn btn-primary">Get Started</button>
+          </div>
+        </div>
+      </nav>
 
-      <ul className="item-list">
-        {items.map((item) => (
-          <li key={item.id} className="item-card">
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-            <span>{item.completed ? '✅ Completed' : '⏳ Pending'}</span>
-          </li>
-        ))}
-      </ul>
+      {/* Hero Section */}
+      <header className="hero container animate-fade-in">
+        <h1 className="hero-title">
+          Train Models <br />
+          <span className="text-gradient">At the Speed of Thought</span>
+        </h1>
+        <p className="hero-subtitle">
+          Manage your datasets, collaborate with your team, and deploy state-of-the-art
+          machine learning models in minutes. No infrastructure management required.
+        </p>
+        <div className="hero-actions">
+          <button className="btn btn-primary btn-large">Start Training Free</button>
+          <button className="btn btn-secondary btn-large">View Documentation</button>
+        </div>
+      </header>
+
+      {/* Features Section */}
+      <section id="features" className="features-section container">
+        <h2 className="section-title">Why choose OGamba?</h2>
+        <div className="features-grid">
+          <div className="feature-card glass glass-card">
+            <div className="feature-icon">📊</div>
+            <h3>Dataset Management</h3>
+            <p>Upload, version, and clean your datasets with our intuitive management suite.</p>
+          </div>
+          <div className="feature-card glass glass-card">
+            <div className="feature-icon">🚀</div>
+            <h3>Fast Training</h3>
+            <p>Leverage our distributed GPU clusters to train models up to 10x faster.</p>
+          </div>
+          <div className="feature-card glass glass-card">
+            <div className="feature-icon">🛠️</div>
+            <h3>One-Click Deploy</h3>
+            <p>Deploy your trained models as scalable APIs with a single click.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-section container">
+        <div className="cta-card glass animate-fade-in">
+          <h2>Ready to build the future?</h2>
+          <p>Join 10,000+ developers building with OGamba.</p>
+          <button className="btn btn-primary btn-large">Create Your Account</button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer animate-fade-in">
+        <div className="container footer-content">
+          <div className="footer-brand">
+            <span className="text-gradient">OGamba</span>
+            <p>© 2026 OGamba AI Inc.</p>
+          </div>
+          <div className="footer-links">
+            <div className="link-group">
+              <h4>Product</h4>
+              <a href="#">Features</a>
+              <a href="#">Pricing</a>
+            </div>
+            <div className="link-group">
+              <h4>Company</h4>
+              <a href="#">About</a>
+              <a href="#">Blog</a>
+            </div>
+            <div className="link-group">
+              <h4>Legal</h4>
+              <a href="#">Privacy</a>
+              <a href="#">Terms</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
