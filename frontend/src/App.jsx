@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLogto } from '@logto/react';
+import { useNavigate } from 'react-router-dom';
 import './App.css'
 
 const ROTATING_TEXTS = [
@@ -12,6 +13,7 @@ const ROTATING_TEXTS = [
 function App() {
   const { isAuthenticated, signIn, signOut } = useLogto();
   const [textIndex, setTextIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,7 +45,7 @@ function App() {
             <a href="#pricing">Pricing</a>
             {isAuthenticated ? (
               <>
-                <button className="btn btn-secondary">Dashboard</button>
+                <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>Dashboard</button>
                 <button className="btn btn-secondary" onClick={handleSignOut}>Logout</button>
               </>
             ) : (

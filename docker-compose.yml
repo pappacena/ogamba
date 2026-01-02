@@ -28,7 +28,7 @@ services:
       context: ./frontend
     environment:
       - VITE_API_URL=http://localhost:8000
-      - VITE_LOGTO_APP_ID=bjmblu7a8vinw7mgqfpa5
+      - VITE_LOGTO_APP_ID=9rkbq6xa8u0o2jnv26d76
       - VITE_LOGTO_ENDPOINT=http://localhost:3001/
     ports:
       - "5173:5173"

@@ -4,13 +4,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from database import Base
 
-class Item(Base):
-    __tablename__ = "items"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    completed = Column(Boolean, default=False)
 
 class User(Base):
     __tablename__ = "users"

@@ -8,7 +8,7 @@ logto-init:
 		-c "ALTER TABLE _logto_configs ENABLE ROW LEVEL SECURITY; ALTER TABLE _logto_configs FORCE ROW LEVEL SECURITY;"
 
 migrate:
-	docker compose exec backend alembic upgrade head
+	docker compose exec backend uv run alembic upgrade head
 
 build:
 	docker compose down -v frontend

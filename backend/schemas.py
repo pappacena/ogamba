@@ -3,17 +3,6 @@ from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from pydantic import UUID4
 
-class ItemBase(BaseModel):
-    title: str
-    description: Optional[str] = None
-    completed: bool = False
-
-class ItemCreate(ItemBase):
-    pass
-
-class Item(ItemBase):
-    id: int
-    model_config = ConfigDict(from_attributes=True)
 
 class UserBase(BaseModel):
     logto_id: str
