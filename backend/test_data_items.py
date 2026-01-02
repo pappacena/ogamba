@@ -35,35 +35,32 @@ def test_create_data_item_success():
     user_resp = client.post("/projects/", json={"name": "Test Project"}, headers={"X-Logto-User": "user1"})
     project_id = user_resp.json()["id"]
 
-    # 2. Create a valid DataItem
+    # 2. Create a valid DataItem with the new simplified format
     payload = {
         "input_message": [
-            {
-                "role": "user",
-                "content": [{"type": "input_text", "text": "Hello"}]
-            }
+            {"type": "text", "content": "Hello"}
         ]
     }
     resp = client.post(f"/projects/{project_id}/data-items/", json=payload, headers={"X-Logto-User": "user1"})
     assert resp.status_code == 200
     data = resp.json()
-    assert data["input_message"][0]["role"] == "user"
-    assert data["input_message"][0]["content"][0]["type"] == "input_text"
+    assert data["input_message"][0]["type"] == "text"
+    assert data["input_message"][0]["content"] == "Hello"
 
 def test_create_data_item_invalid_format():
     user_resp = client.post("/projects/", json={"name": "Test Project"}, headers={"X-Logto-User": "user1"})
     project_id = user_resp.json()["id"]
 
-    # Invalid role
+    # Invalid type
     payload = {
-        "input_message": [{"role": "invalid", "content": [{"type": "input_text"}]}]
+        "input_message": [{"type": "invalid", "content": "Hello"}]
     }
     resp = client.post(f"/projects/{project_id}/data-items/", json=payload, headers={"X-Logto-User": "user1"})
     assert resp.status_code == 422
 
-    # Invalid content type
+    # Missing content
     payload = {
-        "input_message": [{"role": "user", "content": [{"type": "invalid_type"}]}]
+        "input_message": [{"type": "text"}]
     }
     resp = client.post(f"/projects/{project_id}/data-items/", json=payload, headers={"X-Logto-User": "user1"})
     assert resp.status_code == 422
@@ -75,12 +72,9 @@ def test_data_item_ownership():
 
     # User 2 tries to create an item in User 1's project
     payload = {
-        "input_message": [{"role": "user", "content": [{"type": "input_text", "text": "Hack"}]}]
+        "input_message": [{"type": "text", "content": "Hack"}]
     }
-    # Note: main.py uses hardcoded test_user_id unless we mock it.
-    # Let's adjust main.py to actually use the header for current_user if we want multi-user tests.
     resp = client.post(f"/projects/{project_id}/data-items/", json=payload, headers={"X-Logto-User": "user2"})
-    # Since get_current_user in main.py is currently "test_user_id" # Placeholder, we need to fix it for tests.
     assert resp.status_code == 404
 
 def test_list_data_items():
@@ -88,7 +82,7 @@ def test_list_data_items():
     project_id = user_resp.json()["id"]
 
     client.post(f"/projects/{project_id}/data-items/", json={
-        "input_message": [{"role": "user", "content": [{"type": "input_text", "text": "Item 1"}]}]
+        "input_message": [{"type": "text", "content": "Item 1"}]
     }, headers={"X-Logto-User": "user1"})
 
     resp = client.get(f"/projects/{project_id}/data-items/", headers={"X-Logto-User": "user1"})
@@ -100,7 +94,7 @@ def test_soft_delete_data_item():
     project_id = user_resp.json()["id"]
 
     item = client.post(f"/projects/{project_id}/data-items/", json={
-        "input_message": [{"role": "user", "content": [{"type": "input_text", "text": "To delete"}]}]
+        "input_message": [{"type": "text", "content": "To delete"}]
     }, headers={"X-Logto-User": "user1"}).json()
     item_id = item["id"]
 

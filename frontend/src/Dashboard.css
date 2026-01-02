@@ -66,12 +66,19 @@
     font-size: 1.25rem;
 }
 
-.project-id {
+.project-items {
     font-family: monospace;
     font-size: 0.8rem;
     color: var(--text-muted);
-    margin-top: 0.25rem;
+    margin: 0;
 }
+
+
+.project-items {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
 
 .project-meta {
     display: flex;

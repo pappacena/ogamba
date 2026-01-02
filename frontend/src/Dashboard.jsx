@@ -196,8 +196,10 @@ function Dashboard() {
                 <div className="project-info">
                   <h3>{project.name}</h3>
                   <div className="project-meta">
-                    <p className="project-id">ID: {project.id}</p>
+                    <p className="project-items">Data Items: {project.data_items_count || 0}</p>
+
                     <p className="project-date">Created: {formatDate(project.created_at)}</p>
+
                     {project.updated_at && project.updated_at !== project.created_at && (
                       <p className="project-date">Updated: {formatDate(project.updated_at)}</p>
                     )}

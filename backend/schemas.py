@@ -31,19 +31,25 @@ class Project(ProjectBase):
     deleted: bool = False
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    data_items_count: int = 0
+
 
     model_config = ConfigDict(from_attributes=True)
 
+class MessageItem(BaseModel):
+    type: Literal["text", "image"]
+    content: str
+
 class DataItemBase(BaseModel):
-    input_message: List['ChatMessage']
-    output_message: Optional[List['ChatMessage']] = None
+    input_message: List[MessageItem]
+    output_message: Optional[List[MessageItem]] = None
 
 class DataItemCreate(DataItemBase):
     pass
 
 class DataItemUpdate(BaseModel):
-    input_message: Optional[List['ChatMessage']] = None
-    output_message: Optional[List['ChatMessage']] = None
+    input_message: Optional[List[MessageItem]] = None
+    output_message: Optional[List[MessageItem]] = None
     deleted: Optional[bool] = None
 
 class DataItem(DataItemBase):
@@ -55,10 +61,3 @@ class DataItem(DataItemBase):
 
     model_config = ConfigDict(from_attributes=True)
 
-class ContentItem(BaseModel):
-    type: Literal["input_text", "input_image"]
-    model_config = ConfigDict(extra='allow')
-
-class ChatMessage(BaseModel):
-    role: Literal["user", "assistant", "system"]
-    content: List[ContentItem]

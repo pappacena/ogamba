@@ -62,16 +62,10 @@ function ProjectDetail() {
       setOutputPayload(JSON.stringify(item.output_message || [], null, 2));
     } else {
       setInputPayload(JSON.stringify([
-        {
-          role: "user",
-          content: [{ type: "input_text", text: "" }]
-        }
+        { type: "text", content: "" }
       ], null, 2));
       setOutputPayload(JSON.stringify([
-        {
-          role: "assistant",
-          content: [{ type: "input_text", text: "" }]
-        }
+        { type: "text", content: "" }
       ], null, 2));
     }
     setIsModalOpen(true);
@@ -144,6 +138,19 @@ function ProjectDetail() {
     }
   };
 
+  const renderPreview = (messages, label) => {
+    if (!messages || messages.length === 0) return 'No content';
+    const first = messages[0];
+    const prefix = first.type === 'image' ? '[Image] ' : '';
+    return (
+      <div className="preview-block">
+        <span className="label">{label}:</span>
+        <p>{prefix}{first.content || 'Empty message'}</p>
+        {messages.length > 1 && <span className="more-badge">+{messages.length - 1} more</span>}
+      </div>
+    );
+  };
+
   if (!isAuthenticated) return null;
 
   return (
@@ -198,14 +205,8 @@ function ProjectDetail() {
                 dataItems.map(item => (
                   <div key={item.id} className="item-card glass glass-card">
                     <div className="item-content-preview">
-                      <div className="preview-block">
-                        <span className="label">Input:</span>
-                        <p>{item.input_message?.[0]?.content?.[0]?.text || 'Multimodal content'}</p>
-                      </div>
-                      <div className="preview-block">
-                        <span className="label">Output:</span>
-                        <p>{item.output_message?.[0]?.content?.[0]?.text || 'No output'}</p>
-                      </div>
+                        {renderPreview(item.input_message, 'Input')}
+                        {renderPreview(item.output_message, 'Output')}
                     </div>
                     <div className="item-actions">
                       <button className="btn-icon" onClick={() => handleOpenModal(item)} title="Edit Item">📝</button>
@@ -230,29 +231,29 @@ function ProjectDetail() {
             <form onSubmit={handleSaveDataItem}>
               <div className="modal-body-scroll">
                 <div className="form-group">
-                  <label htmlFor="inputPayload">Input Message (JSON OpenAI Format)</label>
+                  <label htmlFor="inputPayload">Input Message (JSON List)</label>
                   <textarea
                     id="inputPayload"
                     value={inputPayload}
                     onChange={(e) => setInputPayload(e.target.value)}
-                    placeholder='[ { "role": "user", "content": [...] } ]'
+                    placeholder='[ { "type": "text", "content": "..." } ]'
                     rows={8}
                     required
                     className="code-editor"
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="outputPayload">Output Message (JSON OpenAI Format)</label>
+                  <label htmlFor="outputPayload">Output Message (JSON List)</label>
                   <textarea
                     id="outputPayload"
                     value={outputPayload}
                     onChange={(e) => setOutputPayload(e.target.value)}
-                    placeholder='[ { "role": "assistant", "content": [...] } ]'
+                    placeholder='[ { "type": "text", "content": "..." } ]'
                     rows={8}
                     required
                     className="code-editor"
                   />
-                  <p className="helper-text">Strict multimodal format required for both.</p>
+                  <p className="helper-text">Format: [ &#123; "type": "text" | "image", "content": "string" &#125; ]</p>
                 </div>
               </div>
               {error && <p className="modal-error">{error}</p>}

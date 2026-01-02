@@ -58,15 +58,30 @@ def create_project(
     db.refresh(db_project)
     return db_project
 
+from sqlalchemy import func
+
 @app.get("/projects/", response_model=List[schemas.Project])
 def list_projects(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    return db.query(models.Project).filter(
+    # Query projects with a count of their non-deleted data items
+    results = db.query(
+        models.Project,
+        func.count(models.DataItem.id).filter(
+            models.DataItem.deleted == False
+        ).label("data_items_count")
+    ).outerjoin(models.DataItem).filter(
         models.Project.owner_id == current_user.id,
         models.Project.deleted == False
-    ).all()
+    ).group_by(models.Project.id).all()
+
+    projects = []
+    for project, count in results:
+        project.data_items_count = count
+        projects.append(project)
+    return projects
+
 
 @app.patch("/projects/{project_id}", response_model=schemas.Project)
 def update_project(
