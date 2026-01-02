@@ -15,6 +15,18 @@ function Dashboard() {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const fetchProjects = async () => {
     setLoading(true);
     try {
@@ -179,7 +191,13 @@ function Dashboard() {
                 <div className="project-icon">📁</div>
                 <div className="project-info">
                   <h3>{project.name}</h3>
-                  <p className="project-id">ID: {project.id}</p>
+                  <div className="project-meta">
+                    <p className="project-id">ID: {project.id}</p>
+                    <p className="project-date">Created: {formatDate(project.created_at)}</p>
+                    {project.updated_at && project.updated_at !== project.created_at && (
+                      <p className="project-date">Updated: {formatDate(project.updated_at)}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="project-actions">
                   <button className="btn-icon" onClick={() => handleOpenModal(project)} title="Edit Project">⚙️</button>

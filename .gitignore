@@ -14,8 +14,7 @@ __pycache__/
 .mypy_cache/
 .coverage
 htmlcov/
-backend/alembic/versions/*
-!backend/alembic/versions/.gitkeep
+backend/alembic/versions/.gitkeep
 
 # Node (Frontend)
 node_modules/
