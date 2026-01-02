@@ -1,5 +1,7 @@
-from pydantic import BaseModel
-from typing import Optional
+import uuid
+from pydantic import BaseModel, ConfigDict
+from typing import Optional, List
+from pydantic import UUID4
 
 class ItemBase(BaseModel):
     title: str
@@ -11,9 +13,7 @@ class ItemCreate(ItemBase):
 
 class Item(ItemBase):
     id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserBase(BaseModel):
     logto_id: str
@@ -23,6 +23,19 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+class ProjectBase(BaseModel):
+    name: str
+
+class ProjectCreate(ProjectBase):
+    pass
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+
+class Project(ProjectBase):
+    id: UUID4
+    owner_id: int
+
+    model_config = ConfigDict(from_attributes=True)
