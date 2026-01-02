@@ -1,9 +1,9 @@
 import uuid
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, JSON, UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID, JSONB
 from database import Base
+
 
 
 class User(Base):
@@ -32,8 +32,8 @@ class DataItem(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
-    input_message = Column(JSONB, nullable=False)
-    output_message = Column(JSONB, nullable=True)
+    input_message = Column(JSON, nullable=False)
+    output_message = Column(JSON, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     deleted = Column(Boolean, default=False)

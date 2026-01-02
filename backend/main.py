@@ -29,11 +29,17 @@ def get_user_by_logto_id(db: Session, logto_id: str):
 
 # Dependency to get current user. For now, we expect Logto ID in X-Logto-User header.
 # In a real app, this would verify a JWT.
-def get_current_user(db: Session = Depends(database.get_db)):
+from fastapi import Header
+from typing import Optional
+
+def get_current_user(
+    x_logto_user: Optional[str] = Header(None, alias="X-Logto-User"),
+    db: Session = Depends(database.get_db)
+):
     # Simple placeholder for Logto auth. We'll use this in tests.
-    # In production, you would use a library to verify the Logto JWT.
-    logto_id = "test_user_id" # Placeholder
+    logto_id = x_logto_user or "test_user_id"
     return get_user_by_logto_id(db, logto_id)
+
 
 @app.get("/")
 def read_root():
@@ -86,3 +92,95 @@ def update_project(
     db.commit()
     db.refresh(db_project)
     return db_project
+
+# --- DataItem Endpoints ---
+
+@app.get("/projects/{project_id}/data-items/", response_model=List[schemas.DataItem])
+def list_data_items(
+    project_id: UUID,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # Verify project ownership
+    project = db.query(models.Project).filter(
+        models.Project.id == project_id,
+        models.Project.owner_id == current_user.id
+    ).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return db.query(models.DataItem).filter(
+        models.DataItem.project_id == project_id,
+        models.DataItem.deleted == False
+    ).all()
+
+@app.post("/projects/{project_id}/data-items/", response_model=schemas.DataItem)
+def create_data_item(
+    project_id: UUID,
+    data_item: schemas.DataItemCreate,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # Verify project ownership
+    project = db.query(models.Project).filter(
+        models.Project.id == project_id,
+        models.Project.owner_id == current_user.id
+    ).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    db_data_item = models.DataItem(
+        **data_item.model_dump(),
+        project_id=project_id
+    )
+    db.add(db_data_item)
+    db.commit()
+    db.refresh(db_data_item)
+    return db_data_item
+
+@app.patch("/projects/{project_id}/data-items/{data_item_id}", response_model=schemas.DataItem)
+def update_data_item(
+    project_id: UUID,
+    data_item_id: UUID,
+    data_item_update: schemas.DataItemUpdate,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # Verify project ownership and data item existence
+    db_data_item = db.query(models.DataItem).join(models.Project).filter(
+        models.DataItem.id == data_item_id,
+        models.DataItem.project_id == project_id,
+        models.Project.owner_id == current_user.id
+    ).first()
+
+    if not db_data_item:
+        raise HTTPException(status_code=404, detail="Data item not found")
+
+    update_data = data_item_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_data_item, key, value)
+
+    db.commit()
+    db.refresh(db_data_item)
+    return db_data_item
+
+@app.delete("/projects/{project_id}/data-items/{data_item_id}")
+def delete_data_item(
+    project_id: UUID,
+    data_item_id: UUID,
+    db: Session = Depends(database.get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    # Verify project ownership and data item existence
+    db_data_item = db.query(models.DataItem).join(models.Project).filter(
+        models.DataItem.id == data_item_id,
+        models.DataItem.project_id == project_id,
+        models.Project.owner_id == current_user.id
+    ).first()
+
+    if not db_data_item:
+        raise HTTPException(status_code=404, detail="Data item not found")
+
+    db_data_item.deleted = True
+    db.commit()
+    return {"message": "Data item soft-deleted"}

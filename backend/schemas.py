@@ -1,6 +1,6 @@
 import uuid
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, List
+from typing import Optional, List, Literal, Any, Dict
 from datetime import datetime
 from pydantic import UUID4
 
@@ -35,15 +35,15 @@ class Project(ProjectBase):
     model_config = ConfigDict(from_attributes=True)
 
 class DataItemBase(BaseModel):
-    input_message: list
-    output_message: Optional[list] = None
+    input_message: List['ChatMessage']
+    output_message: Optional[List['ChatMessage']] = None
 
 class DataItemCreate(DataItemBase):
     pass
 
 class DataItemUpdate(BaseModel):
-    input_message: Optional[list] = None
-    output_message: Optional[list] = None
+    input_message: Optional[List['ChatMessage']] = None
+    output_message: Optional[List['ChatMessage']] = None
     deleted: Optional[bool] = None
 
 class DataItem(DataItemBase):
@@ -54,3 +54,11 @@ class DataItem(DataItemBase):
     deleted: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+class ContentItem(BaseModel):
+    type: Literal["input_text", "input_image"]
+    model_config = ConfigDict(extra='allow')
+
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant", "system"]
+    content: List[ContentItem]
