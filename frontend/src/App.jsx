@@ -1,8 +1,24 @@
+import { useState, useEffect } from 'react';
 import { useLogto } from '@logto/react';
 import './App.css'
 
+const ROTATING_TEXTS = [
+  "Lower inference costs",
+  "Increase  ML team productivity",
+  "Manage your dataset",
+  "Train models",
+];
+
 function App() {
   const { isAuthenticated, signIn, signOut } = useLogto();
+  const [textIndex, setTextIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTextIndex((prev) => (prev + 1) % ROTATING_TEXTS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSignIn = () => {
     signIn(`${window.location.origin}/callback`);
@@ -41,8 +57,12 @@ function App() {
       {/* Hero Section */}
       <header className="hero container animate-fade-in">
         <h1 className="hero-title">
-          Train Models <br />
-          <span className="text-gradient">At the Speed of Thought</span>
+          <div className="rotator-container">
+            <span key={textIndex} className="text-gradient rotating-text">
+              {ROTATING_TEXTS[textIndex]}
+            </span>
+          </div>
+          with few clicks
         </h1>
         <p className="hero-subtitle">
           Manage your datasets, collaborate with your team, and deploy state-of-the-art
