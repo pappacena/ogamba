@@ -57,7 +57,10 @@ def list_projects(
     db: Session = Depends(database.get_db),
     current_user: models.User = Depends(get_current_user)
 ):
-    return db.query(models.Project).filter(models.Project.owner_id == current_user.id).all()
+    return db.query(models.Project).filter(
+        models.Project.owner_id == current_user.id,
+        models.Project.deleted == False
+    ).all()
 
 @app.patch("/projects/{project_id}", response_model=schemas.Project)
 def update_project(
@@ -76,6 +79,9 @@ def update_project(
 
     if project.name is not None:
         db_project.name = project.name
+
+    if project.deleted is not None:
+        db_project.deleted = project.deleted
 
     db.commit()
     db.refresh(db_project)

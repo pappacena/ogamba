@@ -22,9 +22,11 @@ class ProjectCreate(ProjectBase):
 
 class ProjectUpdate(BaseModel):
     name: Optional[str] = None
+    deleted: Optional[bool] = None
 
 class Project(ProjectBase):
     id: UUID4
     owner_id: int
+    deleted: bool = False
 
     model_config = ConfigDict(from_attributes=True)
